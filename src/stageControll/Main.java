@@ -3,9 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package guiControll;
+package stageControll;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -16,14 +17,23 @@ import javafx.stage.Stage;
  * @author NakamuraYugo
  */
 public class Main extends Application {
-    
+
     @Override
     public void start(Stage stage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("FXMLDocument.fxml"));
-        
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("MainStageLayout.fxml"));
+        Parent root = loader.load();
         Scene scene = new Scene(root);
-        
+        MainStageController mainStageController = loader.getController();
+        mainStageController.setStage(stage);
         stage.setScene(scene);
+        stage.setTitle("トマト流速計測システム");
+        //Windowを閉じるときの処理
+        stage.setOnCloseRequest(WindowEvent -> {
+            //シリアル通信を切る
+            mainStageController.getSettingStageController().getSerialIO().closeSerialPort();
+            //すべてのウィンドウを閉じる
+            Platform.exit();
+        });
         stage.show();
     }
 
@@ -33,5 +43,4 @@ public class Main extends Application {
     public static void main(String[] args) {
         launch(args);
     }
-    
 }

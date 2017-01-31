@@ -3,9 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package chartSeries;
+package flowSeries;
 
 import java.util.ArrayList;
+import java.util.List;
 import javafx.scene.chart.XYChart;
 
 /**
@@ -14,8 +15,8 @@ import javafx.scene.chart.XYChart;
  */
 public class SapFlowToXYSeries {
 
-    public static ArrayList<XYChart.Series<String, Double>> convert(ArrayList<SapFlowSeries> dataSeriesList) {
-        ArrayList<XYChart.Series<String, Double>> chartSeriesList = new ArrayList<>();
+    public static List<XYChart.Series<String, Double>> convert(List<SapFlowSeries> dataSeriesList) {
+        List<XYChart.Series<String, Double>> chartSeriesList = new ArrayList<>();
         for (int i = 0; i < dataSeriesList.size(); i++) {
             chartSeriesList.add(new XYChart.Series<>());
             chartSeriesList.get(i).setName(dataSeriesList.get(i).getSeriesName());

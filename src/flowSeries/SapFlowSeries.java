@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package chartSeries;
+package flowSeries;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -20,14 +21,15 @@ public class SapFlowSeries {
 
     private ArrayList<SapFlowData> dataList = new ArrayList<>();
     private String seriesName;
+    private String fileName;
 
     //ファイルからデータを読み込み、sapFlowSeriesのリストを作成する
-    public static ArrayList<SapFlowSeries> getSeriesList() {
+    public List<SapFlowSeries> getSeriesList() {
         FileReader fileReader = null;
         BufferedReader br = null;
         ArrayList<SapFlowSeries> seriesList = new ArrayList<>();
         try {
-            fileReader = new FileReader("./logData/sampleData1.csv");
+            fileReader = new FileReader("./logData/"+fileName);
             br = new BufferedReader(fileReader);
             String line;
             String dataStr[];
@@ -86,6 +88,10 @@ public class SapFlowSeries {
     
     public String getSeriesName() {
         return seriesName;
+    }
+    
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
     }
 
     public ArrayList<SapFlowData> getDataList() {

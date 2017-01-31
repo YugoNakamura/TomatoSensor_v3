@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="480.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="stageControll.SumRateStageController">
+   <top>
+      <MenuBar BorderPane.alignment="CENTER">
+        <menus>
+          <Menu mnemonicParsing="false" text="File">
+            <items>
+              <MenuItem mnemonicParsing="false" text="画像として保存" />
+            </items>
+          </Menu>
+        </menus>
+      </MenuBar>
+   </top>
+   <right>
+      <HBox BorderPane.alignment="CENTER">
+         <children>
+            <Separator orientation="VERTICAL" prefHeight="200.0" />
+            <VBox alignment="CENTER">
+               <children>
+                  <VBox alignment="CENTER" prefHeight="200.0" prefWidth="120.0">
+                     <children>
+                        <Label text="From" />
+                        <DatePicker fx:id="fromDatePicker">
+                           <VBox.margin>
+                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                           </VBox.margin></DatePicker>
+                        <Label text="To" />
+                        <DatePicker fx:id="toDatePicker">
+                           <VBox.margin>
+                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                           </VBox.margin></DatePicker>
+                     </children>
+                  </VBox>
+                  <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0">
+                     <children>
+                        <CheckBox fx:id="checkBox1" mnemonicParsing="false" selected="true" text="Sensor1">
+                           <VBox.margin>
+                              <Insets left="5.0" right="5.0" top="5.0" />
+                           </VBox.margin>
+                        </CheckBox>
+                        <CheckBox fx:id="checkBox2" mnemonicParsing="false" selected="true" text="Sensor2">
+                           <VBox.margin>
+                              <Insets left="5.0" right="5.0" top="5.0" />
+                           </VBox.margin>
+                        </CheckBox>
+                        <CheckBox fx:id="checkBox3" mnemonicParsing="false" selected="true" text="Sensor3">
+                           <VBox.margin>
+                              <Insets left="5.0" right="5.0" top="5.0" />
+                           </VBox.margin>
+                        </CheckBox>
+                        <CheckBox fx:id="checkBox4" mnemonicParsing="false" selected="true" text="Sensor4">
+                           <VBox.margin>
+                              <Insets left="5.0" right="5.0" top="5.0" />
+                           </VBox.margin>
+                        </CheckBox>
+                        <CheckBox fx:id="checkBox5" mnemonicParsing="false" selected="true" text="Sensor5">
+                           <VBox.margin>
+                              <Insets left="5.0" right="5.0" top="5.0" />
+                           </VBox.margin>
+                        </CheckBox>
+                        <CheckBox fx:id="checkBox6" mnemonicParsing="false" selected="true" text="Sensor6">
+                           <VBox.margin>
+                              <Insets left="5.0" right="5.0" top="5.0" />
+                           </VBox.margin>
+                        </CheckBox>
+                     </children>
+                  </VBox>
+                  <Button mnemonicParsing="false" onAction="#showChart" text="OK" />
+               </children>
+            </VBox>
+         </children>
+      </HBox>
+   </right>
+   <center>
+      <LineChart fx:id="sumRateChart" title="累計蒸散量の変化" BorderPane.alignment="CENTER">
+        <xAxis>
+          <CategoryAxis label="日付" side="BOTTOM" />
+        </xAxis>
+        <yAxis>
+          <NumberAxis label="累計蒸散量" side="LEFT" />
+        </yAxis>
+      </LineChart>
+   </center>
+</BorderPane>

@@ -9,6 +9,8 @@
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
@@ -19,28 +21,7 @@
 <?import javafx.scene.shape.SVGPath?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="guiControll.MainStageController">
-   <top>
-      <MenuBar BorderPane.alignment="CENTER">
-        <menus>
-          <Menu mnemonicParsing="false" text="File">
-               <items>
-                  <Menu mnemonicParsing="false" text="グラフを画像として保存">
-                    <items>
-                      <MenuItem mnemonicParsing="false" text="All Sensors" />
-                        <MenuItem mnemonicParsing="false" text="Sensor1" />
-                        <MenuItem mnemonicParsing="false" text="Sensor2" />
-                        <MenuItem mnemonicParsing="false" text="Sensor3" />
-                        <MenuItem mnemonicParsing="false" text="Sensor4" />
-                        <MenuItem mnemonicParsing="false" text="Sensor5" />
-                        <MenuItem mnemonicParsing="false" text="Sensor6" />
-                    </items>
-                  </Menu>
-               </items>
-          </Menu>
-        </menus>
-      </MenuBar>
-   </top>
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="stageControll.MainStageController">
    <center>
       <BorderPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
          <center>
@@ -48,7 +29,7 @@
               <tabs>
                 <Tab text="All Sensors">
                      <content>
-                        <LineChart fx:id="mainChart" title="すべてのセンサ">
+                        <LineChart fx:id="mainChart" animated="false" title="すべてのセンサ">
                           <xAxis>
                             <CategoryAxis label="時刻" side="BOTTOM" />
                           </xAxis>
@@ -58,13 +39,13 @@
                         </LineChart>
                      </content>
                   </Tab>
-                <Tab text="Sensor1">
+                <Tab fx:id="tab1" text="Sensor1">
                      <content>
                         <BorderPane prefHeight="200.0" prefWidth="200.0">
                            <center>
-                              <SplitPane dividerPositions="0.5" prefHeight="160.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                              <SplitPane dividerPositions="0.7" prefHeight="160.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                                  <items>
-                                    <LineChart fx:id="sensorChart1" title="Sensor1">
+                                    <LineChart fx:id="sensorChart1" animated="false" title="Sensor1">
                                       <xAxis>
                                         <CategoryAxis label="時刻" side="BOTTOM" />
                                       </xAxis>
@@ -103,13 +84,13 @@
                         </BorderPane>
                      </content>
                   </Tab>
-                  <Tab text="Sensor2">
+                  <Tab fx:id="tab2" text="Sensor2">
                      <content>
                         <BorderPane prefHeight="200.0" prefWidth="200.0">
                            <center>
-                              <SplitPane dividerPositions="0.5" BorderPane.alignment="CENTER">
+                              <SplitPane dividerPositions="0.7" BorderPane.alignment="CENTER">
                                  <items>
-                                    <LineChart fx:id="sensorChart2" title="Sensor2">
+                                    <LineChart fx:id="sensorChart2" animated="false" title="Sensor2">
                                       <xAxis>
                                         <CategoryAxis label="時刻" side="BOTTOM" />
                                       </xAxis>
@@ -148,13 +129,13 @@
                         </BorderPane>
                      </content>
                   </Tab>
-                  <Tab text="Sensor3">
+                  <Tab fx:id="tab3" text="Sensor3">
                      <content>
                         <BorderPane>
                            <center>
-                              <SplitPane dividerPositions="0.5">
+                              <SplitPane dividerPositions="0.7">
                                  <items>
-                                    <LineChart fx:id="sensorChart3" title="Sensor3">
+                                    <LineChart fx:id="sensorChart3" animated="false" title="Sensor3">
                                       <xAxis>
                                         <CategoryAxis label="時刻" side="BOTTOM" />
                                       </xAxis>
@@ -193,13 +174,13 @@
                         </BorderPane>
                      </content>
                   </Tab>
-                  <Tab text="Sensor4">
+                  <Tab fx:id="tab4" text="Sensor4">
                      <content>
                         <BorderPane>
                            <center>
-                              <SplitPane dividerPositions="0.5">
+                              <SplitPane dividerPositions="0.7">
                                  <items>
-                                    <LineChart fx:id="sensorChart4" title="Sensor4">
+                                    <LineChart fx:id="sensorChart4" animated="false" title="Sensor4">
                                       <xAxis>
                                         <CategoryAxis label="時刻" side="BOTTOM" />
                                       </xAxis>
@@ -238,13 +219,13 @@
                         </BorderPane>
                      </content>
                   </Tab>
-                  <Tab text="Sensor5">
+                  <Tab fx:id="tab5" text="Sensor5">
                      <content>
                         <BorderPane>
                            <center>
-                              <SplitPane dividerPositions="0.5">
+                              <SplitPane dividerPositions="0.7">
                                  <items>
-                                    <LineChart fx:id="sensorChart5" title="Sensor5">
+                                    <LineChart fx:id="sensorChart5" animated="false" title="Sensor5">
                                       <xAxis>
                                         <CategoryAxis label="時刻" side="BOTTOM" />
                                       </xAxis>
@@ -283,13 +264,13 @@
                         </BorderPane>
                      </content>
                   </Tab>
-                  <Tab text="Sensor6">
+                  <Tab fx:id="tab6" text="Sensor6">
                      <content>
                         <BorderPane>
                            <center>
-                              <SplitPane dividerPositions="0.5">
+                              <SplitPane dividerPositions="0.7">
                                  <items>
-                                    <LineChart fx:id="sensorChart6" title="Sensor6">
+                                    <LineChart fx:id="sensorChart6" animated="false" title="Sensor6">
                                       <xAxis>
                                         <CategoryAxis label="時刻" side="BOTTOM" />
                                       </xAxis>
@@ -334,7 +315,15 @@
          <top>
             <HBox alignment="CENTER_RIGHT" BorderPane.alignment="CENTER">
                <children>
-                  <Button mnemonicParsing="false">
+                  <Button fx:id="sumRateButton" mnemonicParsing="false" onAction="#openSumRateStage" prefHeight="33.0" prefWidth="33.0" text="∫" textAlignment="CENTER">
+                     <HBox.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </HBox.margin>
+                     <font>
+                        <Font name="Yu Gothic Bold" size="13.0" />
+                     </font>
+                  </Button>
+                  <Button fx:id="settingButton" mnemonicParsing="false" onAction="#openSettingStage">
                      <HBox.margin>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </HBox.margin>
@@ -364,7 +353,7 @@
    <bottom>
       <BorderPane BorderPane.alignment="CENTER">
          <right>
-            <Button mnemonicParsing="false" BorderPane.alignment="CENTER">
+            <Button fx:id="nextBtn" mnemonicParsing="false" onAction="#changeNext" BorderPane.alignment="CENTER">
                <graphic>
                   <SVGPath content="M268.234,24.08c-22.883-21.777-59.085-20.883-80.861,2c-21.787,22.904-20.894,59.116,2.01,80.883l96.511,91.84H57.202C25.606,198.803,0,224.399,0,256.006c0,31.596,25.606,57.192,57.202,57.192h228.691l-96.511,91.85c-22.904,21.756-23.797,57.979-2.01,80.862c21.776,22.883,57.978,23.798,80.861,2.011L512,256.006L268.234,24.08z" scaleX="0.05" scaleY="0.05" />
                </graphic>
@@ -377,7 +366,7 @@
             </Button>
          </right>
          <left>
-            <Button mnemonicParsing="false" BorderPane.alignment="CENTER">
+            <Button fx:id="prevBtn" mnemonicParsing="false" onAction="#changePrev" BorderPane.alignment="CENTER">
                <graphic>
                   <SVGPath content="M454.792,198.809H226.106l96.511-91.848c22.89-21.766,23.802-57.976,2.014-80.877c-21.778-22.89-57.976-23.78-80.866-2.003L0,256.006L243.766,487.92c22.89,21.788,59.088,20.875,80.866-2.015c21.788-22.878,20.875-59.099-2.014-80.854l-96.511-91.848h228.687c31.604,0,57.208-25.594,57.208-57.198C512,224.403,486.396,198.809,454.792,198.809z" scaleX="0.05" scaleY="0.05" />
                </graphic>
@@ -389,6 +378,29 @@
                </padding>
             </Button>
          </left>
+         <top>
+            <ProgressBar fx:id="dataInProgress" prefWidth="200.0" progress="0.0" BorderPane.alignment="CENTER" />
+         </top>
+         <center>
+            <Label fx:id="dateLabel" text="日付" BorderPane.alignment="CENTER">
+               <font>
+                  <Font size="20.0" />
+               </font>
+            </Label>
+         </center>
       </BorderPane>
    </bottom>
+   <top>
+      <MenuBar BorderPane.alignment="CENTER">
+        <menus>
+          <Menu mnemonicParsing="false" text="File">
+            <items>
+                  <MenuItem mnemonicParsing="false" onAction="#saveChart" text="画像として保存" />
+                  <SeparatorMenuItem mnemonicParsing="false" />
+              <MenuItem mnemonicParsing="false" onAction="#exit" text="閉じる" />
+            </items>
+          </Menu>
+        </menus>
+      </MenuBar>
+   </top>
 </BorderPane>

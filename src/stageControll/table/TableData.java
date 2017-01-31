@@ -3,9 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package guiControll.table;
+package stageControll.table;
 
-import chartSeries.SapFlowData;
+import flowSeries.SapFlowData;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
