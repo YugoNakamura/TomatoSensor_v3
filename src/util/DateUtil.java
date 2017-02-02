@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package fileDate;
+package util;
 
 import java.io.File;
 import java.time.LocalDate;
@@ -11,8 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * ログファイルの日付の管理用クラス
- *
+ * ログファイルや日付の管理を行うクラス<br>
+ * 特記がない限り参照型の引数を持つ関数にはnullを入れてはならない
  * @author NakamuraYugo
  */
 public class DateUtil {
@@ -23,11 +23,18 @@ public class DateUtil {
     public static final int TODAY = 0;
 
     /**
-     * 現在の日付にamountToAddを加えた日付を計算し、それに対応する流速のログファイルのファイル名を返す
-     *
+     * 引数を日数とし、今日の日付と足し合わせる。その日に対応する流速のログファイルのファイル名を返す<br>
+     * 実際にそのファイルが存在しているかは判定していないので
+     * {@link DateUtil#isExistFile(int)}や{@link DateUtil#isExistFile(java.time.LocalDate)}を使って
+     * チェックすることをお勧めする。
+     * nullを返すことはない。
+     * 0や負の数を入れても構わない。0の場合は今日を指すことになり、負の数は前の日を指すことになる。<br>
+     * 引数に今日を指定したいときは{@link DateUtil#TODAY}という定数が用意されている。(実態はint型の0)
+     * @see #isExistFile(java.time.LocalDate) 
+     * @see #isExistFile(int) 
      * @param amountToAdd 現在の日付に加える日数
      * @return 変換後のファイル名<br>
-     * 出力例:sensorLog2017_2_1.csv
+     * 出力例:"sensorLog2017_2_1.csv"
      */
     public String dateToFileName(int amountToAdd) {
         LocalDate date = LocalDate.now().plusDays(amountToAdd);
@@ -35,8 +42,13 @@ public class DateUtil {
     }
 
     /**
-     * 直接日付を流速のログファイルのファイル名に変換する
-     *
+     * 日付インスタンスに対応する流速のログファイルのファイル名を返す。<br>
+     * 実際にそのファイルが存在しているかは判定していないので
+     * {@link DateUtil#isExistFile(int)}や{@link DateUtil#isExistFile(java.time.LocalDate)}を使って
+     * チェックすることをお勧めする。
+     * nullを返すことはない。
+     * @see #isExistFile(java.time.LocalDate) 
+     * @see #isExistFile(int) 
      * @param date 変換する日付
      * @return 変換後のファイル名<br>
      * 出力例:sensorLog2017_2_1.csv
@@ -46,8 +58,9 @@ public class DateUtil {
     }
 
     /**
-     * 現在の日付にamountToAddを加えた日付を計算し、文字列に変換する
-     *
+     * 引数を日数とし、今日の日付と足し合わせる。その日付を表す文字列に変換する。<br>
+     * 0や負の数を入れても構わない。0の場合は今日を指すことになり、負の数は前の日を指すことになる。<br>
+     * 引数に今日を指定したいときは{@link DateUtil#TODAY}という定数が用意されている。(実態はint型の0)
      * @param amountToAdd 現在の日付に加える日数
      * @return 変換後の文字列 <br>
      * 出力例:2017-2-1
@@ -57,9 +70,8 @@ public class DateUtil {
     }
 
     /**
-     * 直接日付を文字列に変換する
-     *
-     * @param date 現在の日付に加える日数
+     * 日付インスタンスに対応する文字列に変換する<br>
+     * @param date 変換する日付
      * @return 変換後の文字列<br>
      * 出力例:2017-2-1
      */
@@ -68,8 +80,8 @@ public class DateUtil {
     }
 
     /**
-     * 現在の日付にamountToAddを加えた日付を計算し、それに対応する流速のログファイルが存在しているかチェックする
-     *
+     * 引数を日数とし、今日の日付と足し合わせる。それに対応する流速のログファイルが存在しているかチェックする<br>
+     * 引数に今日を指定したいときは{@link DateUtil#TODAY}という定数が用意されている。(実態はint型の0)
      * @param amountToAdd 現在の日付に加える日数
      * @return 存在している場合はtrue
      */
@@ -79,9 +91,8 @@ public class DateUtil {
     }
 
     /**
-     * 直接日付に対応する流速のログファイルが存在するかチェックする
-     *
-     * @param date
+     * 日付インスタンスに対応する流速のログファイルが存在するかチェックする
+     * @param date チェックしたい日付
      * @return 存在している場合はtrue
      */
     public boolean isExistFile(LocalDate date) {
@@ -90,9 +101,8 @@ public class DateUtil {
     }
 
     /**
-     * 現在存在している流速のログファイルに対応する日付のリストを返す
-     *
-     * @return 流速のログファイルの日付のリスト
+     * 流速ファイルが存在している日付をまとめたリストを返す
+     * @return 流速のログファイルの日付インスタンスのリスト
      */
     public List<LocalDate> getLogDateList() {
         File logDir = new File("./logData");

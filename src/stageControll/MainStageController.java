@@ -5,7 +5,7 @@
  */
 package stageControll;
 
-import fileDate.DateUtil;
+import util.DateUtil;
 import flowSeries.SapFlowSeries;
 import flowSeries.SapFlowToXYSeries;
 import java.io.File;
@@ -40,16 +40,19 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import javafx.stage.WindowEvent;
 import javax.imageio.ImageIO;
 
 /**
+ * 最初に出てくるウィンドウの振る舞いを設定しているクラス
  *
  * @author NakamuraYugo
  */
 public class MainStageController implements Initializable {
 
     private Stage mainStage;
+    /**
+     *
+     */
     @FXML
     private LineChart<String, Double> mainChart;
     @FXML
@@ -97,11 +100,18 @@ public class MainStageController implements Initializable {
     private SumRateStageController sumRateStageController;
     private DateUtil dateUtil;
 
+    //日付変更の際に、基準の日から何日動いたか記録する
+    private int dateCount;
+
+    boolean settingModaled = false;
     @FXML
     private void openSettingStage() {
+        if (!settingModaled) {
+            settingStage.initModality(Modality.WINDOW_MODAL);
+            settingStage.initOwner(mainStage);
+        }
+        settingModaled = true;
         settingStage.show();
-        settingButton.setDisable(true);
-        settingStage.setOnCloseRequest(WindowEvent -> settingButton.setDisable(false));
         //設定の変更を反映させる
         updateSeries();
     }
@@ -200,11 +210,19 @@ public class MainStageController implements Initializable {
         sumRateLabelList.add(sumRateLabel6);
 
         dateUtil = new DateUtil();
-        //最初に読み込むファイルは今日のデータに設定する。
+        //最初に読み込むファイルは存在する最新のデータを設定する。
         sapFlowSeries = new SapFlowSeries();
-        sapFlowSeries.setFileName(dateUtil.dateToFileName(DateUtil.TODAY));
+        int date = DateUtil.TODAY;
+        while (true) {
+            if (dateUtil.isExistFile(date)) {
+                break;
+            }
+            date--;
+        }
+        sapFlowSeries.setFileName(dateUtil.dateToFileName(date));
         //日付のLabelに今日の日付を張り付ける
-        dateLabel.setText(dateUtil.dateToString(DateUtil.TODAY));
+        dateLabel.setText(dateUtil.dateToString(date));
+        dateCount = date;
 
         //グラフや表にデータを張り付ける(updateSeriesの中のsetがaddになった版)
         flowSeriesList = sapFlowSeries.getSeriesList();
@@ -258,11 +276,13 @@ public class MainStageController implements Initializable {
             new Alert(Alert.AlertType.ERROR, "settingStageControllerのFXMLが開けません", ButtonType.OK).showAndWait();
             e.printStackTrace();
         }
+
+        //前日か次の日データがなかった場合日付変更ボタンを不活性化する
+        nextBtn.setDisable(!dateUtil.isExistFile(dateCount + 1));
+        prevBtn.setDisable(!dateUtil.isExistFile(dateCount - 1));
     }
 
     //表示するデータの日付を一つ戻すメソッド
-    int dateCount = 0;
-
     @FXML
     private void changePrev(ActionEvent event) {
         dateCount--;

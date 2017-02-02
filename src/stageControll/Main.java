@@ -5,6 +5,7 @@
  */
 package stageControll;
 
+import java.io.IOException;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -13,13 +14,21 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 /**
- *
+ * このプログラムのMainクラス<br>
+ * mainStageの設定を行っている<br>
+ * 特記がない限り参照型の引数を持つ関数にはnullを入れてはならない
  * @author NakamuraYugo
  */
 public class Main extends Application {
 
+    /**
+     * mainStageのレイアウトを定義している"MainStageLayout.fxml"を読み込みmainStageに反映している<br>
+     * この関数は内部で自動的に呼ばれるものである。
+     * @param stage
+     * @throws IOException 
+     */
     @Override
-    public void start(Stage stage) throws Exception {
+    public void start(Stage stage) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("MainStageLayout.fxml"));
         Parent root = loader.load();
         Scene scene = new Scene(root);

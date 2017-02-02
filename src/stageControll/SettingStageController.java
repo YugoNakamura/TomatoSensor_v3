@@ -20,6 +20,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.stage.Stage;
+import serialControll.SerialEventListener;
 import serialControll.SerialIO;
 
 /**
@@ -52,19 +53,22 @@ public class SettingStageController implements Initializable {
         //choiceBoxの状態を保存する
         selectedCOMName = portChoiceBox.getValue();
         
-        //何らかのCOMポートが選択されていた場合つなげる
+        //何らかのCOMポートが選択され、前回選択されたポートとは別のポートが選択されたとき接続処理を開始する
         if (selectedCOMName != null && !selectedCOMName.matches(prevCOMName)) {
             prevCOMName = selectedCOMName;
             serialIO.closeSerialPort();
             try {
-                serialIO.openSerialPort(prevCOMName);
-                serialIO.getSerialPort().addEventListener(new SerialIO());
+                serialIO.openSerialPort(selectedCOMName);
+                serialIO.getSerialPort().addEventListener(new SerialEventListener(serialIO.getSerialPort()));
             } catch (NoSuchPortException | PortInUseException | UnsupportedCommOperationException | TooManyListenersException ex) {
                 ex.printStackTrace();
             }
             //Eventがあったとき、EventListenerに伝える
             serialIO.getSerialPort().notifyOnDataAvailable(true);
+            System.out.println("stageControll.SettingStageController.submit()");
+            System.out.println(serialIO.getSerialPort().getName());
         }
+        //settingStageを閉じる(隠す)
         settingStage.hide();
     }
     

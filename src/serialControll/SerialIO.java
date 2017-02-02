@@ -9,37 +9,26 @@ import gnu.io.CommPortIdentifier;
 import gnu.io.NoSuchPortException;
 import gnu.io.PortInUseException;
 import gnu.io.SerialPort;
-import gnu.io.SerialPortEvent;
-import gnu.io.SerialPortEventListener;
 import gnu.io.UnsupportedCommOperationException;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
-import javafx.scene.control.ProgressBar;
 
 /**
  *
  * @author NakamuraYugo
  */
-public class SerialIO implements SerialPortEventListener {
+public class SerialIO {
 
     //Openしているシリアルポート
     private SerialPort serialPort;
     //シリアルポートが使われているか
-    private boolean serialOpened;
-    //シリアル通信で得られた生データ
-    private List<List<Double>> rawDataList;
-    //データの受信状況のプログレスバー
-    private ProgressBar progressBar;
-    //一回の観測で得られるデータの行数
-    private final int MAX_RECEIVE_DATA = 3630;
+    private boolean serialOpened = false;
 
     /**
-     * 利用できるシリアルポートの一覧を取得する
+     * このプログラムが動いているシステムの中から利用できるシリアルポートの一覧を取得する
      *
-     * @return
+     * @return 利用できるシリアルポート名のリスト(システムによりシリアルポートの数は違うため動かすシステムによってサイズが変わる)
      */
     public List<String> getSetialPortList() {
         List<String> portList = new ArrayList<>();
@@ -59,6 +48,10 @@ public class SerialIO implements SerialPortEventListener {
 
     /**
      * 指定されたシリアルポートを開く ボーレート：9600 データビット：8 ストップビット：1 パリティ：イーブン フロー制御：無し
+     * @param portName 接続したいシリアルポートの名前
+     * @throws NoSuchPortException 指定されたポート名が存在しないとき
+     * @throws PortInUseException 指定されたポートがすでに使われているとき
+     * @throws UnsupportedCommOperationException システムでサポートされていないシリアルポートの扱いをしたとき
      */
     public void openSerialPort(String portName) throws NoSuchPortException, PortInUseException, UnsupportedCommOperationException {
         final int TIME_OUT = 2000;
@@ -74,7 +67,11 @@ public class SerialIO implements SerialPortEventListener {
         serialOpened = true;
     }
 
+    /**
+     * シリアルポートを開いている場合、そのシリアルポートを閉じる
+     */
     public void closeSerialPort() {
+        System.out.println("serialControll.SerialIO.closeSerialPort()");
         if (serialOpened) {
             serialPort.close();
             serialOpened = false;
@@ -83,62 +80,5 @@ public class SerialIO implements SerialPortEventListener {
 
     public SerialPort getSerialPort() {
         return serialPort;
-    }
-
-    public List<List<Double>> getRawDataList() {
-        return rawDataList;
-    }
-
-    public void setProgressbar(ProgressBar progressBar) {
-        this.progressBar = progressBar;
-    }
-
-    //シリアル信号が入力されたときの処理
-    @Override
-    public void serialEvent(SerialPortEvent serialEvent) {
-        //通信開始の合図
-        final char STX = 0x02;
-        //通信終了の合図
-        final char ETX = 0x03;
-        
-        String[] rawData;
-        //受信データ(受信失敗の場合-1となるのでCharではなくint)
-        int receivedData;
-        //大量の文字列の連結を行うのでStringBuilderを使用する。
-        StringBuilder buffer = new StringBuilder();
-        InputStream in = null;
-
-        //通信完了の合図を受け取ったら必要な部分を切り出してbufferに追加する
-        if (serialEvent.getEventType() == SerialPortEvent.DATA_AVAILABLE) {
-            try {
-                in = serialPort.getInputStream();
-                while (true) {
-                    receivedData = in.read();
-                    if (receivedData == STX) {
-                        continue;
-                    }
-                    if (receivedData == ETX || receivedData == -1) {
-                        break;
-                    }
-                    //中身のデータのみをbufferに追加する
-                    buffer.append((char) receivedData);
-                }
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            } finally {
-                try {
-                    in.close();
-                } catch (IOException ex) {
-                    return;
-                }
-            }
-
-            //カンマで分割し、各センサごとの電位差を蓄積していく
-            rawData = buffer.toString().split(",");
-            for (int i = 0; i < rawDataList.size(); i++) {
-                rawDataList.get(i).add(Double.valueOf(rawData[i + 2]));
-            }
-            progressBar.setProgress((double)rawDataList.get(0).size()/MAX_RECEIVE_DATA);
-        }
     }
 }
