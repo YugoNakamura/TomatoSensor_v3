@@ -15,7 +15,7 @@ import java.util.List;
  * 特記がない限り参照型の引数を持つ関数にはnullを入れてはならない
  * @author NakamuraYugo
  */
-public class DateUtil {
+public class DateAndFile {
 
     /**
      * メソッドの引数として今日を指定したいときに使用する
@@ -25,11 +25,11 @@ public class DateUtil {
     /**
      * 引数を日数とし、今日の日付と足し合わせる。その日に対応する流速のログファイルのファイル名を返す<br>
      * 実際にそのファイルが存在しているかは判定していないので
-     * {@link DateUtil#isExistFile(int)}や{@link DateUtil#isExistFile(java.time.LocalDate)}を使って
+     * {@link DateAndFile#isExistFile(int)}や{@link DateAndFile#isExistFile(java.time.LocalDate)}を使って
      * チェックすることをお勧めする。
      * nullを返すことはない。
      * 0や負の数を入れても構わない。0の場合は今日を指すことになり、負の数は前の日を指すことになる。<br>
-     * 引数に今日を指定したいときは{@link DateUtil#TODAY}という定数が用意されている。(実態はint型の0)
+     * 引数に今日を指定したいときは{@link DateAndFile#TODAY}という定数が用意されている。(実態はint型の0)
      * @see #isExistFile(java.time.LocalDate) 
      * @see #isExistFile(int) 
      * @param amountToAdd 現在の日付に加える日数
@@ -44,7 +44,7 @@ public class DateUtil {
     /**
      * 日付インスタンスに対応する流速のログファイルのファイル名を返す。<br>
      * 実際にそのファイルが存在しているかは判定していないので
-     * {@link DateUtil#isExistFile(int)}や{@link DateUtil#isExistFile(java.time.LocalDate)}を使って
+     * {@link DateAndFile#isExistFile(int)}や{@link DateAndFile#isExistFile(java.time.LocalDate)}を使って
      * チェックすることをお勧めする。
      * nullを返すことはない。
      * @see #isExistFile(java.time.LocalDate) 
@@ -60,7 +60,7 @@ public class DateUtil {
     /**
      * 引数を日数とし、今日の日付と足し合わせる。その日付を表す文字列に変換する。<br>
      * 0や負の数を入れても構わない。0の場合は今日を指すことになり、負の数は前の日を指すことになる。<br>
-     * 引数に今日を指定したいときは{@link DateUtil#TODAY}という定数が用意されている。(実態はint型の0)
+     * 引数に今日を指定したいときは{@link DateAndFile#TODAY}という定数が用意されている。(実態はint型の0)
      * @param amountToAdd 現在の日付に加える日数
      * @return 変換後の文字列 <br>
      * 出力例:2017-2-1
@@ -81,7 +81,7 @@ public class DateUtil {
 
     /**
      * 引数を日数とし、今日の日付と足し合わせる。それに対応する流速のログファイルが存在しているかチェックする<br>
-     * 引数に今日を指定したいときは{@link DateUtil#TODAY}という定数が用意されている。(実態はint型の0)
+     * 引数に今日を指定したいときは{@link DateAndFile#TODAY}という定数が用意されている。(実態はint型の0)
      * @param amountToAdd 現在の日付に加える日数
      * @return 存在している場合はtrue
      */

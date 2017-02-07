@@ -5,7 +5,7 @@
  */
 package stageControll;
 
-import util.DateUtil;
+import util.DateAndFile;
 import flowSeries.SapFlowSeries;
 import flowSeries.SapFlowToXYSeries;
 import java.io.File;
@@ -98,7 +98,7 @@ public class MainStageController implements Initializable {
     //SumRateStage関係
     private Stage sumRateStage;
     private SumRateStageController sumRateStageController;
-    private DateUtil dateUtil;
+    private DateAndFile dateUtil;
 
     //日付変更の際に、基準の日から何日動いたか記録する
     private int dateCount;
@@ -209,10 +209,10 @@ public class MainStageController implements Initializable {
         sumRateLabelList.add(sumRateLabel5);
         sumRateLabelList.add(sumRateLabel6);
 
-        dateUtil = new DateUtil();
+        dateUtil = new DateAndFile();
         //最初に読み込むファイルは存在する最新のデータを設定する。
         sapFlowSeries = new SapFlowSeries();
-        int date = DateUtil.TODAY;
+        int date = DateAndFile.TODAY;
         while (true) {
             if (dateUtil.isExistFile(date)) {
                 break;

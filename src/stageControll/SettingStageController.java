@@ -65,8 +65,6 @@ public class SettingStageController implements Initializable {
             }
             //Eventがあったとき、EventListenerに伝える
             serialIO.getSerialPort().notifyOnDataAvailable(true);
-            System.out.println("stageControll.SettingStageController.submit()");
-            System.out.println(serialIO.getSerialPort().getName());
         }
         //settingStageを閉じる(隠す)
         settingStage.hide();

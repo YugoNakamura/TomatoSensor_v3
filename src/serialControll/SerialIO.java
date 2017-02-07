@@ -71,7 +71,6 @@ public class SerialIO {
      * シリアルポートを開いている場合、そのシリアルポートを閉じる
      */
     public void closeSerialPort() {
-        System.out.println("serialControll.SerialIO.closeSerialPort()");
         if (serialOpened) {
             serialPort.close();
             serialOpened = false;

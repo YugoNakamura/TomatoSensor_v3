@@ -5,7 +5,7 @@
  */
 package stageControll;
 
-import util.DateUtil;
+import util.DateAndFile;
 import flowSeries.SapFlowSeries;
 import java.net.URL;
 import java.time.LocalDate;
@@ -58,7 +58,7 @@ public class SumRateStageController implements Initializable {
 
     
     private SapFlowSeries sapFlowSeries = new SapFlowSeries();
-    private DateUtil dateUtil = new DateUtil();
+    private DateAndFile dateUtil = new DateAndFile();
     private List<SapFlowSeries> dataList = new ArrayList<>();
     
     /**
