@@ -9,7 +9,6 @@
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
-<?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.Tab?>
@@ -334,7 +333,7 @@
                         <Insets bottom="-240.0" left="-240.0" right="-240.0" top="-240.0" />
                      </padding>
                   </Button>
-                  <Button mnemonicParsing="false" onAction="#update">
+                  <Button fx:id="updateBtn" mnemonicParsing="false" onAction="#update">
                      <HBox.margin>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </HBox.margin>
@@ -378,9 +377,6 @@
                </padding>
             </Button>
          </left>
-         <top>
-            <ProgressBar fx:id="dataInProgress" prefWidth="200.0" progress="0.0" BorderPane.alignment="CENTER" />
-         </top>
          <center>
             <Label fx:id="dateLabel" text="日付" BorderPane.alignment="CENTER">
                <font>

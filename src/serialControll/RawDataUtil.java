@@ -13,33 +13,30 @@ import util.DateAndFile;
 
 /**
  * シリアル通信で得られた生のデータをファイルに一時的に保存し、流速を計算する
- * {@link SerialEventListener}でしか使わない関数なのでアクセス修飾子は同パッケージ内
- * のみしかアクセスできない修飾子なしとする
+ * {@link SerialEventListener}でしか使わない関数なのでアクセス修飾子は同パッケージ内 のみしかアクセスできない修飾子なしとする
+ *
  * @author NakamuraYugo
  */
-class RawDataUtil {
+public class RawDataUtil {
 
-    /**
-     * ログデータを記録するホームディレクトリ名
-     */
-    public static final String LOG_DIR_NAME = "logData/";
-    /**
-     * 生データを記録するホームディレクトリ名
-     */
-    public static final String RAW_DIR_HOME_NAME = LOG_DIR_NAME + "rawData/";
     /**
      * 日付に関する取り扱いを決めるインスタンス
      */
-    private DateAndFile dateUtil;
+    private DateAndFile dateAndFile;
 
+    /**
+     * 生データを記録するホームディレクトリ名
+     */
+    public static final String RAW_DIR_HOME_NAME = DateAndFile.LOG_DIR_NAME + "rawData/";
+    
     /**
      * コンストラクタで保存に必要なディレクトリが存在していなかったら作成する
      */
     RawDataUtil() {
-        dateUtil = new DateAndFile();
+        dateAndFile = new DateAndFile();
         //必要なディレクトリが作られていなかったら作成する
-        if (!new File(LOG_DIR_NAME).isDirectory()) {
-            new File(LOG_DIR_NAME).mkdir();
+        if (!new File(DateAndFile.LOG_DIR_NAME).isDirectory()) {
+            new File(DateAndFile.LOG_DIR_NAME).mkdir();
         }
         if (!new File(RAW_DIR_HOME_NAME).isDirectory()) {
             new File(RAW_DIR_HOME_NAME).mkdir();
@@ -50,7 +47,6 @@ class RawDataUtil {
      * Tera Termなどでセンサから来たデータを確認していると、通信開始直後などに
      * 不完全なデータが受信されていることに気づいた。そこで一回受信するごとに
      * チェックを入れ先ほど受信したデータが形式に則っているかを確認する必要がある。
-     *
      * @param buffer 受信した一行分のデータ
      * @return bufferが形式に従っていた場合true
      */
@@ -94,6 +90,7 @@ class RawDataUtil {
     /**
      * 通信の開始直後に得られた生データは加熱→冷却の加熱の部分が抜けている可能性が 高い。
      * そこで一周期分のデータがあるか判別を行う。(加熱→冷却の瞬間があるか判別する)
+     *
      * @param rawData 生データ
      * @return
      */
@@ -117,14 +114,25 @@ class RawDataUtil {
     void saveRawData(List<String> rawData) {
         //生データのファイル名は"rawData<0から始まる数字>.csv"である
         final String RAW_FILE_NAME_BACE = "RawData";
-        String rawDirName = RAW_DIR_HOME_NAME + dateUtil.dateToString(DateAndFile.TODAY) + "/";
-        //最終的な生データのファイル名(相対パスを含む)
+        //生データを保存するディレクトリ名
+        String rawDirName = RAW_DIR_HOME_NAME + dateAndFile.dateToString(DateAndFile.TODAY) + "/";
+        //最終的な生データのファイル名(相対パス)
         String rawFileName = "";
 
-        //その日の生データを保存するディレクトリが存在していなかった場合、作成する。
+        //生データを保存するディレクトリが存在していなかった場合、作成する。
         File rawDataDir = new File(rawDirName);
         if (!rawDataDir.isDirectory()) {
             rawDataDir.mkdir();
+            
+            //生データはどんどんファイルサイズが大きくなる上、ずっと取っておくものでもないから
+            //１週間たったら自動的に削除するようにする
+            File deleteDir = new File(RAW_DIR_HOME_NAME+dateAndFile.dateToString(-7));
+            if(deleteDir.isDirectory()) {
+                for(File file : deleteDir.listFiles()) {
+                    file.delete();
+                }
+                deleteDir.delete();
+            }
         }
 
         /*ディレクトリの中にデータが存在していなかった場合、ファイル名は"RawData0.csv"とする
@@ -151,7 +159,7 @@ class RawDataUtil {
         try {
             fileWriter = new FileWriter(rawFileName);
             for (int i = 0; i < rawData.size(); i++) {
-                fileWriter.write(rawData.get(i)+"\n");
+                fileWriter.write(rawData.get(i) + "\n");
             }
             fileWriter.flush();
         } catch (IOException ex) {
@@ -165,15 +173,5 @@ class RawDataUtil {
                 }
             }
         }
-    }
-
-    /**
-     * 生データから流速データを計算する
-     *
-     * @return
-     */
-    List<Double> rawToFlow(List<String> rawData) {
-        String rawDataArray[][] = new String[8][rawData.size()];
-        return null;
     }
 }

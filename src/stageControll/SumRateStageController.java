@@ -9,9 +9,15 @@ import util.DateAndFile;
 import flowSeries.SapFlowSeries;
 import java.net.URL;
 import java.time.LocalDate;
+import java.time.Period;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.Set;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -26,10 +32,11 @@ import javafx.util.Callback;
 
 /**
  * 累積蒸散量を示すグラフの振る舞いを定義するクラス
+ *
  * @author NakamuraYugo
  */
 public class SumRateStageController implements Initializable {
-    
+
     /**
      * 表示するセンサの番号を指定するチェックボックス
      */
@@ -56,11 +63,10 @@ public class SumRateStageController implements Initializable {
     @FXML
     private DatePicker toDatePicker;
 
-    
     private SapFlowSeries sapFlowSeries = new SapFlowSeries();
-    private DateAndFile dateUtil = new DateAndFile();
+    private DateAndFile dateAndFile = new DateAndFile();
     private List<SapFlowSeries> dataList = new ArrayList<>();
-    
+
     /**
      * 累積蒸散量を計算し表示する関数
      */
@@ -69,30 +75,36 @@ public class SumRateStageController implements Initializable {
         List<XYChart.Series<String, Double>> chartSeriesList = new ArrayList<>();
         for (int i = 0; i < 6; i++) {
             chartSeriesList.add(new XYChart.Series<>());
-            chartSeriesList.get(i).setName("sensor" + i);
         }
-
         LocalDate fromDate = fromDatePicker.getValue();
         LocalDate toDate = toDatePicker.getValue();
-        //グラフに表示する期間
-        int period = fromDate.until(toDate).getDays();
-        //指定された期間のデータが存在しなければダイアログを出し、returnする。
-        for (int i = 0; i < period; i++) {
-            if (!dateUtil.isExistFile(fromDate.plusDays(i))) {
-                new Alert(Alert.AlertType.ERROR, "選択された日のデータがありません", ButtonType.OK).show();
-                return;
+
+        List<LocalDate> fileDatelist = dateAndFile.getLogDateList();
+        //始点から終点までの日付のリスト
+        List<LocalDate> during = new ArrayList<>();
+        //a.isBefore(a)やb.isAfter(b)はfalseを返すからあらかじめ足しておく
+        during.add(fromDate);
+        during.add(toDate);
+        for (int i = 0; i < fileDatelist.size(); i++) {
+            if (fromDate.isBefore(fileDatelist.get(i)) && toDate.isAfter(fileDatelist.get(i))) {
+                during.add(fileDatelist.get(i));
             }
         }
+        Collections.sort(during);
+
         String date;
         double rateSum;
-        for (int i = 0; i < period; i++) {
-            //取得したい日付のファイル名を設定し、データをListを取得する
-            sapFlowSeries.setFileName(dateUtil.dateToFileName(fromDate.plusDays(i)));
+        for (int i = 0; i < during.size(); i++) {
+            //日付を指定する
+            sapFlowSeries.setFileName(dateAndFile.dateToFileName(during.get(i)));
+            //その日のデータを得る
             dataList = sapFlowSeries.getSeriesList();
-            date = dateUtil.dateToString(fromDate.plusDays(i));
+            //日付を文字列に変える
+            date = dateAndFile.dateToString(during.get(i));
             for (int n = 0; n < 6; n++) {
                 rateSum = dataList.get(n).getSapFlowSum();
-                chartSeriesList.get(n).getData().add(i, new XYChart.Data<>(date, rateSum));
+                chartSeriesList.get(n).getData().add(new XYChart.Data<>(date, rateSum));
+                chartSeriesList.get(n).setName(dataList.get(n).getSeriesName());
             }
         }
         //グラフのデータをリセットする
@@ -128,7 +140,7 @@ public class SumRateStageController implements Initializable {
             @Override
             public void updateItem(LocalDate item, boolean empty) {
                 super.updateItem(item, empty);
-                List<LocalDate> dateList = dateUtil.getLogDateList();
+                List<LocalDate> dateList = dateAndFile.getLogDateList();
                 if (empty == true || item == null) {
                     setText(null);
                     setGraphic(null);
@@ -147,7 +159,7 @@ public class SumRateStageController implements Initializable {
                 @Override
                 public void updateItem(LocalDate item, boolean empty) {
                     super.updateItem(item, empty);
-                    List<LocalDate> dateList = dateUtil.getLogDateList();
+                    List<LocalDate> dateList = dateAndFile.getLogDateList();
                     if (empty == true || item == null) {
                         setText(null);
                         setGraphic(null);

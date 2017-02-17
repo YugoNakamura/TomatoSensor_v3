@@ -11,7 +11,13 @@ package flowSeries;
  * @author NakamuraYugo
  */
 public class SapFlowData {
+    /**
+     * 流速を計測した時刻 例:6時1分→"6:01"
+     */
     private String time;
+    /**
+     * その時観測された流速
+     */
     private double value;
 
     /**

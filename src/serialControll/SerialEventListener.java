@@ -15,7 +15,9 @@ import java.util.List;
 
 /**
  * シリアル通信によるデータが受信されたときに実行される
- *
+ * 大局的な処理を{@link #serialEvent(gnu.io.SerialPortEvent) }で行い、
+ * 長い処理は基本的に{@link RawDataUtil}にメソッドとしてまとめた。
+ * @see RawDataUtil
  * @author NakamuraYugo
  */
 public class SerialEventListener implements SerialPortEventListener {
@@ -25,17 +27,23 @@ public class SerialEventListener implements SerialPortEventListener {
     private StringBuilder buffer;
     //上のbufferをまとめたもの
     private List<String> rawData;
+    /**
+     * 生データの管理及びファイルに保存する
+     */
     private RawDataUtil rawDataUtil;
-
+    /**
+     * 流速を計算及びファイルに保存
+     */
+    private SapFlowGenerator sapFlowGenerator;
     /**
      * 入力ストリームを得るため
      *
      * @param serialPort
      */
-    public SerialEventListener(SerialPort serialPort) {
-        this.serialPort = serialPort;
+    public SerialEventListener() {
         rawData = new ArrayList();
         rawDataUtil = new RawDataUtil();
+        sapFlowGenerator = new SapFlowGenerator();
     }
 
     /**
@@ -96,13 +104,17 @@ public class SerialEventListener implements SerialPortEventListener {
             rawData.add(buffer.toString());
             //センサが次の過熱が始まったか判断する
             if (rawDataUtil.chackOffToOn(rawData)) {
+                //蓄積されたデータが過熱していた時のデータと、冷却していた時のデータを持っているか判別する
                 if (rawDataUtil.checkCycle(rawData)) {
                     rawDataUtil.saveRawData(rawData);
-                    rawDataUtil.rawToFlow(rawData);
+                    sapFlowGenerator.saveSapFlow(sapFlowGenerator.rawToFlow(rawData));
                 }
                 rawData.clear();
             }
         }
     }
     
+    public void setSerialPort(SerialPort serialPort) {
+        this.serialPort = serialPort;
+    }
 }

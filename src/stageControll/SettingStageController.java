@@ -44,6 +44,8 @@ public class SettingStageController implements Initializable {
     private boolean[] selectedSensor = new boolean[6];
     private Stage settingStage;
     
+    private SerialEventListener serialEventListener;
+    
     @FXML
     private void submit(ActionEvent event) {
         //checkBoxの状態を保存する
@@ -59,7 +61,8 @@ public class SettingStageController implements Initializable {
             serialIO.closeSerialPort();
             try {
                 serialIO.openSerialPort(selectedCOMName);
-                serialIO.getSerialPort().addEventListener(new SerialEventListener(serialIO.getSerialPort()));
+                serialEventListener.setSerialPort(serialIO.getSerialPort());
+                serialIO.getSerialPort().addEventListener(serialEventListener);
             } catch (NoSuchPortException | PortInUseException | UnsupportedCommOperationException | TooManyListenersException ex) {
                 ex.printStackTrace();
             }
@@ -86,6 +89,7 @@ public class SettingStageController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         serialIO = new SerialIO();
+        serialEventListener = new SerialEventListener();
         
         sensorCheckBoxList = new ArrayList<>();
         sensorCheckBoxList.add(sensorCheckBox1);

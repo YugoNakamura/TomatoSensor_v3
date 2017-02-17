@@ -6,8 +6,12 @@
 package util;
 
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -22,6 +26,35 @@ public class DateAndFile {
      */
     public static final int TODAY = 0;
 
+    /**
+     * 流速データを記録するホームディレクトリ名
+     */
+    public static final String LOG_DIR_NAME = "logData/";
+    
+    /**
+     * 各日の流速ファイルにつけるヘッダ。データの凡例を示す。
+     */
+    public static final String LOG_FILE_HEADER = "Time,Sensor1,Sensor2,Sensor3,Sensor4,Sensor5,Sensor6\n";
+    
+    public DateAndFile() {
+        //流速ファイルが一つもなかった場合、ファイルを作る。
+        if (!new File(dateToFileName(TODAY)).exists()) {
+            FileWriter fileWriter = null;
+            try {
+                fileWriter = new FileWriter(DateAndFile.LOG_DIR_NAME + dateToFileName(DateAndFile.TODAY));
+                fileWriter.write(LOG_FILE_HEADER);
+                fileWriter.flush();
+            } catch (IOException ex) {
+                if (fileWriter != null) {
+                    try {
+                        fileWriter.close();
+                    } catch (IOException ex1) {
+                    }
+                }
+            }
+        }
+    }
+    
     /**
      * 引数を日数とし、今日の日付と足し合わせる。その日に対応する流速のログファイルのファイル名を返す<br>
      * 実際にそのファイルが存在しているかは判定していないので
@@ -87,9 +120,47 @@ public class DateAndFile {
      */
     public boolean isExistFile(int amountToAdd) {
         String fileName = dateToFileName(amountToAdd);
-        return new File("./logData/" + fileName).exists();
+        return new File(LOG_DIR_NAME + fileName).exists();
     }
-
+    
+    
+    /**
+     * 引数に指定された日付よりも直近の古いファイルの日付を返す。\br
+     * 古いファイルが存在しなかった場合、nullをかえす
+     * @param baceDate 基準となる日付
+     * @return 直近の古いファイルの日付(存在しない場合、nullを返す)
+     */
+    public LocalDate getOlderFile(LocalDate baceDate) {
+        //流速ファイルの日付のリストを得る
+        List<LocalDate> fileDateList = getLogDateList();
+        //新しい順に並び替える
+        Collections.sort(fileDateList,Comparator.reverseOrder());
+        for(int i=0;i<fileDateList.size();i++) {
+            if(fileDateList.get(i).isBefore(baceDate)) {
+                return fileDateList.get(i);
+            }
+        }
+        return null;
+    }
+    
+    /**
+     * 引数に指定された日付よりも直近の新しいファイルの日付を返す。\br
+     * 新しいファイルが存在しなかった場合、nullをかえす
+     * @param baceDate 基準となる日付
+     * @return 直近の新しいファイルの日付(存在しない場合、nullを返す)
+     */
+    public LocalDate getNewerFile(LocalDate baceDate) {
+        List<LocalDate> fileDateList = getLogDateList();
+        //古い順に並び替える
+        Collections.sort(fileDateList,Comparator.naturalOrder());
+        for(int i=0;i<fileDateList.size();i++) {
+            if(fileDateList.get(i).isAfter(baceDate)) {
+                return fileDateList.get(i);
+            }
+        }
+        return null;
+    }
+    
     /**
      * 日付インスタンスに対応する流速のログファイルが存在するかチェックする
      * @param date チェックしたい日付
@@ -97,7 +168,7 @@ public class DateAndFile {
      */
     public boolean isExistFile(LocalDate date) {
         String fileName = dateToFileName(date);
-        return new File("./logData/" + fileName).exists();
+        return new File(LOG_DIR_NAME + fileName).exists();
     }
 
     /**
@@ -105,7 +176,7 @@ public class DateAndFile {
      * @return 流速のログファイルの日付インスタンスのリスト
      */
     public List<LocalDate> getLogDateList() {
-        File logDir = new File("./logData");
+        File logDir = new File(LOG_DIR_NAME);
         String[] fileNames = logDir.list((File dir, String fileName) -> {
             return fileName.matches("sensorLog[0-9]{4}_[0-9][0-9]?_[0-9][0-9]?.csv");
         });

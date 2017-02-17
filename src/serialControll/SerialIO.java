@@ -54,7 +54,9 @@ public class SerialIO {
      * @throws UnsupportedCommOperationException システムでサポートされていないシリアルポートの扱いをしたとき
      */
     public void openSerialPort(String portName) throws NoSuchPortException, PortInUseException, UnsupportedCommOperationException {
+        //タイムアウトは2000[ms]
         final int TIME_OUT = 2000;
+        //ボーレートは9600[baud]
         final int BAUDRATE = 9600;
         CommPortIdentifier portID;
         portID = CommPortIdentifier.getPortIdentifier(portName);
@@ -77,6 +79,10 @@ public class SerialIO {
         }
     }
 
+    /**
+     * SerialPortのgetter
+     * @return SrialPort
+     */
     public SerialPort getSerialPort() {
         return serialPort;
     }

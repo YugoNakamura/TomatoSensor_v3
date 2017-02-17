@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.IOException;
 import stageControll.table.TableData;
 import java.net.URL;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -34,6 +35,7 @@ import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.WritableImage;
 import javafx.stage.DirectoryChooser;
@@ -83,13 +85,19 @@ public class MainStageController implements Initializable {
     private SapFlowSeries sapFlowSeries;
 
     @FXML
-    private Button settingButton, sumRateButton;
-    @FXML
-    private ProgressBar dataInProgress;
+    private Button settingButton, sumRateButton,updateBtn;
     @FXML
     Label dateLabel;
+    /**
+     * グラフに表示する日付を変更するボタン。次の日に変更される。
+     */
     @FXML
-    private Button nextBtn, prevBtn;
+    private Button nextBtn;
+    /**
+     * グラフに表示する日付を変更するボタン。前の日に変更される。
+     */
+    @FXML
+    private Button prevBtn;
 
     //SettingStage関係
     private Stage settingStage;
@@ -97,13 +105,18 @@ public class MainStageController implements Initializable {
 
     //SumRateStage関係
     private Stage sumRateStage;
-    private SumRateStageController sumRateStageController;
-    private DateAndFile dateUtil;
+    private DateAndFile dateAndFile;
 
     //日付変更の際に、基準の日から何日動いたか記録する
-    private int dateCount;
+    private LocalDate baceDate;
 
-    boolean settingModaled = false;
+    /**
+     * モーダル化をするためにウィンドウを開く直前1回だけメソッドを動かす必要があるため、 boolean型で動かした後、反転する
+     */
+    private boolean settingModaled = false;
+    /**
+     * settingウィンドウを開く。最初に開いたときのみモーダル化のメソッドを実行する
+     */
     @FXML
     private void openSettingStage() {
         if (!settingModaled) {
@@ -111,21 +124,27 @@ public class MainStageController implements Initializable {
             settingStage.initOwner(mainStage);
         }
         settingModaled = true;
-        settingStage.show();
+        settingStage.showAndWait();
         //設定の変更を反映させる
         updateSeries();
     }
 
+    private boolean sumRateModaled = false;
+
     @FXML
     private void openSumRateStage() {
-        sumRateButton.setDisable(true);
-        sumRateStage.setOnCloseRequest(WindowEvent -> sumRateButton.setDisable(false));
-        sumRateStage.show();
+        if (!sumRateModaled) {
+            sumRateStage.initModality(Modality.WINDOW_MODAL);
+            sumRateStage.initOwner(mainStage);
+        }
+        sumRateModaled = true;
+        sumRateStage.showAndWait();
     }
 
     @FXML
     private void update(ActionEvent event) {
         updateSeries();
+
     }
 
     private void updateSeries() {
@@ -155,8 +174,11 @@ public class MainStageController implements Initializable {
 
         //流速合計を取得し、ラベルに乗せる
         for (int i = 0; i < sumRateLabelList.size(); i++) {
-            sumRateLabelList.get(i).setText(Double.toString(flowSeriesList.get(i).getSapFlowSum()));
+            sumRateLabelList.get(i).setText(Double.toString(Math.round(flowSeriesList.get(i).getSapFlowSum())));
         }
+
+        nextBtn.setDisable(dateAndFile.getNewerFile(baceDate) == null);
+        prevBtn.setDisable(dateAndFile.getOlderFile(baceDate) == null);
     }
 
     @Override
@@ -209,20 +231,42 @@ public class MainStageController implements Initializable {
         sumRateLabelList.add(sumRateLabel5);
         sumRateLabelList.add(sumRateLabel6);
 
-        dateUtil = new DateAndFile();
+        //SettingStageの設定
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("SettingStageLayout.fxml"));
+            Parent settingLayout = loader.load();
+            settingStage = new Stage();
+            settingStage.setScene(new Scene(settingLayout));
+            settingStage.setResizable(false);
+            settingStage.setTitle("設定");
+            //ウィンドウの枠の設定(最大化ボタンなどを表示させない)
+            settingStage.initStyle(StageStyle.UTILITY);
+            settingStageController = loader.getController();
+            settingStageController.setStage(settingStage);
+        } catch (IOException e) {
+            new Alert(Alert.AlertType.ERROR, "settingStageControllerのFXMLが開けません", ButtonType.OK).showAndWait();
+            e.printStackTrace();
+        }
+
+        //SumRateStageの設定
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("SumRateStageLayout.fxml"));
+            Parent sumRateLayout = loader.load();
+            sumRateStage = new Stage();
+            sumRateStage.setScene(new Scene(sumRateLayout));
+            sumRateStage.setTitle("累計蒸散量の変化");
+        } catch (IOException e) {
+            new Alert(Alert.AlertType.ERROR, "settingStageControllerのFXMLが開けません", ButtonType.OK).showAndWait();
+            e.printStackTrace();
+        }
+
+        dateAndFile = new DateAndFile();
         //最初に読み込むファイルは存在する最新のデータを設定する。
         sapFlowSeries = new SapFlowSeries();
-        int date = DateAndFile.TODAY;
-        while (true) {
-            if (dateUtil.isExistFile(date)) {
-                break;
-            }
-            date--;
-        }
-        sapFlowSeries.setFileName(dateUtil.dateToFileName(date));
-        //日付のLabelに今日の日付を張り付ける
-        dateLabel.setText(dateUtil.dateToString(date));
-        dateCount = date;
+        baceDate = LocalDate.now();
+        sapFlowSeries.setFileName(dateAndFile.dateToFileName(baceDate));
+        //日付のLabelに日付を張り付ける
+        dateLabel.setText(dateAndFile.dateToString(baceDate));
 
         //グラフや表にデータを張り付ける(updateSeriesの中のsetがaddになった版)
         flowSeriesList = sapFlowSeries.getSeriesList();
@@ -247,61 +291,39 @@ public class MainStageController implements Initializable {
             sumRateLabelList.get(i).setText(Double.toString(flowSeriesList.get(i).getSapFlowSum()));
         }
 
-        //SettingStageの設定
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("SettingStageLayout.fxml"));
-            Parent settingLayout = loader.load();
-            settingStage = new Stage();
-            settingStage.setScene(new Scene(settingLayout));
-            settingStage.setResizable(false);
-            settingStage.setTitle("設定");
-            //ウィンドウの枠の設定(最大化ボタンなどを表示させない)
-            settingStage.initStyle(StageStyle.UTILITY);
-            settingStageController = loader.getController();
-            settingStageController.setStage(settingStage);
-        } catch (IOException e) {
-            new Alert(Alert.AlertType.ERROR, "settingStageControllerのFXMLが開けません", ButtonType.OK).showAndWait();
-            e.printStackTrace();
-        }
-
-        //SumRateStageの設定
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("SumRateStageLayout.fxml"));
-            Parent sumRateLayout = loader.load();
-            sumRateStage = new Stage();
-            sumRateStage.setScene(new Scene(sumRateLayout));
-            sumRateStageController = loader.getController();
-            sumRateStage.setTitle("累計蒸散量の変化");
-        } catch (IOException e) {
-            new Alert(Alert.AlertType.ERROR, "settingStageControllerのFXMLが開けません", ButtonType.OK).showAndWait();
-            e.printStackTrace();
-        }
-
+        //ツールチップの設定
+        settingButton.setTooltip(new Tooltip("設定ウィンドウを開きます"));
+        sumRateButton.setTooltip(new Tooltip("指定した期間の累計蒸散量を計算します"));
+        updateBtn.setTooltip(new Tooltip("データを更新します"));
+        nextBtn.setTooltip(new Tooltip("次の日に移動します"));
+        prevBtn.setTooltip(new Tooltip("前の日に移動します"));
+        
         //前日か次の日データがなかった場合日付変更ボタンを不活性化する
-        nextBtn.setDisable(!dateUtil.isExistFile(dateCount + 1));
-        prevBtn.setDisable(!dateUtil.isExistFile(dateCount - 1));
+        nextBtn.setDisable(dateAndFile.getNewerFile(baceDate) == null);
+        prevBtn.setDisable(dateAndFile.getOlderFile(baceDate) == null);
+
     }
 
     //表示するデータの日付を一つ戻すメソッド
     @FXML
     private void changePrev(ActionEvent event) {
-        dateCount--;
-        dateLabel.setText(dateUtil.dateToString(dateCount));
-        sapFlowSeries.setFileName(dateUtil.dateToFileName(dateCount));
-        nextBtn.setDisable(!dateUtil.isExistFile(dateCount + 1));
-        prevBtn.setDisable(!dateUtil.isExistFile(dateCount - 1));
+        baceDate = dateAndFile.getOlderFile(baceDate);
+        dateLabel.setText(dateAndFile.dateToString(baceDate));
+        sapFlowSeries.setFileName(dateAndFile.dateToFileName(baceDate));
         updateSeries();
+        nextBtn.setDisable(dateAndFile.getNewerFile(baceDate) == null);
+        prevBtn.setDisable(dateAndFile.getOlderFile(baceDate) == null);
     }
 
     //表示するデータの日付を一つ進めるメソッド
     @FXML
     private void changeNext(ActionEvent event) {
-        dateCount++;
-        dateLabel.setText(dateUtil.dateToString(dateCount));
-        sapFlowSeries.setFileName(dateUtil.dateToFileName(dateCount));
+        baceDate = dateAndFile.getNewerFile(baceDate);
+        dateLabel.setText(dateAndFile.dateToString(baceDate));
+        sapFlowSeries.setFileName(dateAndFile.dateToFileName(baceDate));
         updateSeries();
-        nextBtn.setDisable(!dateUtil.isExistFile(dateCount + 1));
-        prevBtn.setDisable(!dateUtil.isExistFile(dateCount - 1));
+        nextBtn.setDisable(dateAndFile.getNewerFile(baceDate) == null);
+        prevBtn.setDisable(dateAndFile.getOlderFile(baceDate) == null);
     }
 
     @FXML
