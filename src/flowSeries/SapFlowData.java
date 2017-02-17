@@ -10,6 +10,7 @@ package flowSeries;
  * 特記がない限り参照型の引数を持つ関数にはnullを入れてはならない
  * @author NakamuraYugo
  */
+
 public class SapFlowData {
     /**
      * 流速を計測した時刻 例:6時1分→"6:01"
