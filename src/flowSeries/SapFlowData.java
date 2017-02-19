@@ -6,12 +6,14 @@
 package flowSeries;
 
 /**
- * 流速のデータの組(時刻とその時の流速)をまとめたクラス<br>
+ * 流速を観測した時刻とその値の組<br>
+ * コンストラクタでフィールドを設定し、getterで取得する
  * 特記がない限り参照型の引数を持つ関数にはnullを入れてはならない
  * @author NakamuraYugo
+ * @see SapFlowSeries
  */
-
 public class SapFlowData {
+    
     /**
      * 流速を計測した時刻 例:6時1分→"6:01"
      */
@@ -22,7 +24,7 @@ public class SapFlowData {
     private double value;
 
     /**
-     * SapFlowDataのコンストラクタ。データを設定したいときはこのコンストラクタで行う<br>
+     * コンストラクタで値の設定を行う<br>
      * 流速に関して負の数を引数に設定してもプログラムとしては問題ない
      * @param time 流速を計測した時刻 例:6時1分→"6:01"
      * @param value その時観測された流速
