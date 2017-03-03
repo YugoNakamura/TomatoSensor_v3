@@ -86,7 +86,7 @@ public class MainStageController implements Initializable {
     @FXML
     private Button settingButton, sumRateButton,updateBtn;
     @FXML
-    Label dateLabel;
+    private Label dateLabel;
     /**
      * グラフに表示する日付を変更するボタン。次の日に変更される。
      */

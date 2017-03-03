@@ -38,7 +38,7 @@ public class DateAndFile {
     
     public DateAndFile() {
         //流速ファイルが一つもなかった場合、ファイルを作る。
-        if (!new File(dateToFileName(TODAY)).exists()) {
+        if (!new File(DateAndFile.LOG_DIR_NAME+dateToFileName(TODAY)).exists()) {
             FileWriter fileWriter = null;
             try {
                 fileWriter = new FileWriter(DateAndFile.LOG_DIR_NAME + dateToFileName(DateAndFile.TODAY));

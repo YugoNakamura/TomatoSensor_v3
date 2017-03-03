@@ -21,10 +21,8 @@ import java.util.List;
  * @see SapFlowToXYSeries
  */
 public class SapFlowSeries {
-    /**
-     * {@link SapFlowData}グラフに表示するデータの集まり
-     */
-    private List<SapFlowData> dataList = new ArrayList<>();
+
+    private List<SapFlowData> dataList;
     /**
      * グラフに表示する際に使う系列名
      */
@@ -33,6 +31,10 @@ public class SapFlowSeries {
      * データを読み込む際に参照するファイルの名前
      */
     private String fileName;
+
+    public SapFlowSeries() {
+        this.dataList = new ArrayList<>();
+    }
 
     /**
      * 一つのファイルから6つのセンサのデータをまとめて読み込み、6つのSapFlowSeriesがまとめられたリストが返される。

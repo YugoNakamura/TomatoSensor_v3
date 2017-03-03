@@ -23,39 +23,41 @@ class SapFlowGenerator {
     /**
      * 電圧と初期電圧が等しくなったとみる際の許容誤差[mV]
      */
-    final double PERMISSIBLE_ERROR = 0.02;
+    private final double PERMISSIBLE_ERROR = 0.02;
     /**
      * PICが電位差を測定する周期[s]
      */
-    final double SAMPLING_CYCLE = 0.2;
+    private final double SAMPLING_CYCLE = 0.2;
     /**
      * ヒートパルスをかける時間[s]
      */
-    final double HEAT_PLUSE_LENGTH = 5.0;
+    private final double HEAT_PLUSE_LENGTH = 5.0;
     /**
      * 一つのセンサにおける温度センサの間隔[mm]
      */
-    final double TEMP_SENSOR_DISTANCE = 15;
+    private final double TEMP_SENSOR_DISTANCE = 15;
     /**
      * 日付等を管理するためのインスタンス
      */
     private DateAndFile dateAndFile;
 
+    /**
+     * コンストラクタ
+     */
     SapFlowGenerator() {
         dateAndFile = new DateAndFile();
     }
 
     /**
      * 生データから流速データを計算する。文字列から{@link RawData}のインスタンスのリストを生成して計算する
-     *
      * @see RawData
      * @return
      */
     List<Double> rawToFlow(List<String> strData) {
-        //計算結果を入れるList
+        //各センサの計算結果を入れるList
         List<Double> flowList = new ArrayList<>(6);
         //Stringの生データをそれぞれクラスに変換して整理しやすくする
-        List<RawData> rawDataList = new ArrayList<>(6);
+        List<RawData> rawDataList = new ArrayList<>();
         for (int i = 0; i < strData.size(); i++) {
             rawDataList.add(new RawData(strData.get(i)));
         }

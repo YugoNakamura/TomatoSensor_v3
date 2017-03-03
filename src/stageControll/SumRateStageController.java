@@ -9,22 +9,15 @@ import util.DateAndFile;
 import flowSeries.SapFlowSeries;
 import java.net.URL;
 import java.time.LocalDate;
-import java.time.Period;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.Set;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.DateCell;
 import javafx.scene.control.DatePicker;
@@ -63,9 +56,15 @@ public class SumRateStageController implements Initializable {
     @FXML
     private DatePicker toDatePicker;
 
-    private SapFlowSeries sapFlowSeries = new SapFlowSeries();
-    private DateAndFile dateAndFile = new DateAndFile();
-    private List<SapFlowSeries> dataList = new ArrayList<>();
+    private SapFlowSeries sapFlowSeries;
+    private DateAndFile dateAndFile;
+    private List<SapFlowSeries> dataList;
+
+    public SumRateStageController() {
+        this.dataList = new ArrayList<>();
+        this.dateAndFile = new DateAndFile();
+        this.sapFlowSeries = new SapFlowSeries();
+    }
 
     /**
      * 累積蒸散量を計算し表示する関数
